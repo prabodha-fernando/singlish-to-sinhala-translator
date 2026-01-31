@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Singlish to Sinhala Translator</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; background-color: #f4f7f6; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        textarea { width: 100%; height: 120px; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 16px; box-sizing: border-box; }
+        #output { border: 1px solid #eee; padding: 15px; min-height: 60px; background: #fafafa; border-radius: 4px; font-size: 18px; color: #333; margin-top: 10px; line-height: 1.6; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Singlish to Sinhala Translator</h2>
+        <textarea id="inputField" oninput="runTranslator()" placeholder="Type your Singlish here..."></textarea>
+        <p>Sinhala Output:</p>
+        <div id="output"></div>
+    </div>
+
+    <script>
+        function runTranslator() {
+            const input = document.getElementById("inputField").value;
+            const output = document.getElementById("output");
+
+            if (!input.trim()) { output.innerText = ""; return; }
+
+            const mapping = {
+                "mama": "මම", "gedhara": "ගෙදර", "yanavaa": "යනවා",
+                "bath": "බත්", "oonee": "ඕනේ", "api": "අපි", "paasal": "පාසල්",
+                "haebaeyi": "හැබැයි", "vahina": "වහින", "nisaa": "නිසා", "dhaenma": "දැන්ම",
+                "kaeema": "කෑම", "kanna": "කන්න", "saha": "සහ", "passe": "පස්සේ",
+                "chithrapatayakuth": "චිත්‍රපටයකුත්", "balanavaa": "බලනවා", "oyaa": "ඔයා",
+                "hari": "හරි", "ehenam": "එහෙනම්", "yamu": "යමු", "yamAw": "යමු",
+                "vaessa": "වැස්ස", "unoth": "උනොත්", "maarga": "මාර්ග", "thadhabadha": "තදබදය",
+                "oyaata": "ඔයාට", "kohomadha": "කොහොමද", "kavadhdha": "කවද්ද", "meeka": "මේක",
+                "vaede": "වැඩේ", "vahaama": "වහාම", "issarahata": "ඉස්සරහට", "valaa": "වලා",
+                "naeha": "නැහැ", "aayuboovan!": "ආයුබෝවන්!", "suba": "සුබ", "udhaeesanak": "උදෑසනක්",
+                "udhavvak": "උදව්වක්", "karanna": "කරන්න", "puLuvan": "පුළුවන්", "puLuvandha": "පුළුවන්ද",
+                "karuNaakaralaa": "කරුණාකරලා", "poddak": "පොඩ්ඩක්", "lipin": "ලිපින", "dhennam": "දෙන්නම්",
+                "ov": "ඔව්", "samaava": "සමාව", "athvaeradhiimak": "අත්වැරදීමක්", "eeyi": "ඒයි",
+                "ooka": "ඕක", "dhiyan": "දියන්", "nidhimathayi": "නිදිමතයි", "gihin": "ගිහින්",
+                "paan": "පාන්", "iyee": "ඊයේ", "naetum": "නැටුම්", "panthi": "පන්ති",
+                "iiLaGa": "ඊළඟ", "Lamayi": "ළමයි", "schoo": "ස්කූල්", "vaeen": "වෑන්",
+                "nimaali": "නිමාලි", "office": "ඔෆිස්", "late": "ලේට්", "Colombo": "කොළඹ",
+                "trip": "ට්‍රිප්", "Kandy": "නුවර", "mIt8": "මීටින්", "attach": "ඇමුණුම්",
+                "salli": "සල්ලි", "Rs.": "රුපියල්", "rae": "රෑ", "ssee": "සී", "dhitvaa": "දිට්ඨ",
+                "suLi": "සුළි", "kuNaatuva": "කුණාටුව", "vathur": "වතුර", "ayay": "අය",
+                "heethuven": "හේතුවෙන්", "aDhikaariy": "අධිකාරිය", "kotas": "කොටස්",
+                "vinaasha": "විනාශ", "iga": "ඉග", "kiloomiitar": "කිලෝමීටර්", "pamaNa": "පමණ",
+                "naagarika": "නාගරික", "kaLeey": "කළේය", "machan": "මචං", "supiri": "සුපිරි",
+                "adoo": "අඩෝ", "bng": "බං", "siraavatama": "සිරාවටම", "kiri": "කිරි",
+                "Oyaa": "ඔයා", "nidhidha": "නිදිද", "enavaanam": "එනවානම්"
+            };
+
+            const words = input.split(/\s+/);
+            const translated = words.map(word => {
+                let clean = word.replace(/[?.,!]/g, "");
+                let result = mapping[clean] || mapping[word.toLowerCase()] || mapping[word] || word;
+                if (word.endsWith("?")) result += "?";
+                if (word.endsWith(".")) result += ".";
+                if (word.endsWith("!")) result += "!";
+                return result;
+            });
+            output.innerText = translated.join(" ");
+        }
+    </script>
+</body>
+</html>
