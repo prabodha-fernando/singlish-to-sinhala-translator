@@ -1,0 +1,12 @@
+{
+  "name": "singlish-to-sinhala-translator",
+  "version": "1.0.0",
+  "description": "Singlish to Sinhala transliteration with Playwright automation tests",
+  "main": "index.html",
+  "scripts": {
+    "test": "npx playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.40.0"
+  }
+}
