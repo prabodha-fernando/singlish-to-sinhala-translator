@@ -1,68 +1,358 @@
 <!DOCTYPE html>
-<html>
+<html lang="si">
 <head>
-    <title>Singlish to Sinhala Translator</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Singlish Pro | Premium Transliteration</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&family=Noto+Sans+Sinhala:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: sans-serif; padding: 20px; background-color: #f4f7f6; }
-        .container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        textarea { width: 100%; height: 120px; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 16px; box-sizing: border-box; }
-        #output { border: 1px solid #eee; padding: 15px; min-height: 60px; background: #fafafa; border-radius: 4px; font-size: 18px; color: #333; margin-top: 10px; line-height: 1.6; }
+        :root {
+            --brand-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            --bg-dark: #0f172a;
+            --surface-dark: #1e293b;
+            --text-light: #f8fafc;
+            --text-dim: #94a3b8;
+            --accent: #818cf8;
+            --border: rgba(255, 255, 255, 0.1);
+            --glass: rgba(30, 41, 59, 0.7);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', 'Noto Sans Sinhala', sans-serif;
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.15) 0px, transparent 50%);
+            min-height: 100vh;
+            color: var(--text-light);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .premium-card {
+            width: 100%;
+            max-width: 600px;
+            background: var(--glass);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border);
+            border-radius: 32px;
+            padding: 40px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            background: var(--brand-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.02em;
+        }
+
+        .header p {
+            color: var(--text-dim);
+            font-size: 14px;
+            margin-top: 8px;
+        }
+
+        .input-section {
+            position: relative;
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 10px;
+            padding-left: 4px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 140px;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 20px;
+            color: var(--text-light);
+            font-size: 18px;
+            font-family: inherit;
+            resize: none;
+            outline: none;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        textarea:focus {
+            border-color: var(--accent);
+            background: rgba(15, 23, 42, 0.8);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
+        }
+
+        /* Suggestions Engine Styles */
+        #suggestions {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            right: 0;
+            background: #1e293b;
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
+            z-index: 1000;
+            max-height: 280px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .suggestion-item {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .suggestion-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            padding-left: 24px;
+        }
+
+        .sinhala-text {
+            display: block;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-light);
+            margin-bottom: 4px;
+        }
+
+        .suggestion-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            color: var(--text-dim);
+        }
+
+        .badge-id {
+            background: rgba(99, 102, 241, 0.2);
+            color: var(--accent);
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-weight: 700;
+        }
+
+        .output-container {
+            background: var(--brand-gradient);
+            padding: 1px; /* Border effect */
+            border-radius: 20px;
+        }
+
+        .output-box {
+            background: #0f172a;
+            border-radius: 19px;
+            padding: 20px;
+            min-height: 80px;
+            font-size: 22px;
+            color: var(--text-light);
+            line-height: 1.6;
+            font-weight: 600;
+        }
+
+        .highlight {
+            color: #fbbf24;
+            text-decoration: underline;
+            text-underline-offset: 4px;
+        }
+
+        /* Custom Scrollbar */
+        #suggestions::-webkit-scrollbar { width: 6px; }
+        #suggestions::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 10px;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Singlish to Sinhala Translator</h2>
-        <textarea id="inputField" oninput="runTranslator()" placeholder="Type your Singlish here..."></textarea>
-        <p>Sinhala Output:</p>
-        <div id="output"></div>
+
+<div class="premium-card">
+    <div class="header">
+        <h1>SINGLISH PRO</h1>
+        <p>Intelligent Sinhala Transliteration Engine</p>
     </div>
+    
+    <div class="input-section">
+        <label>Input Stream</label>
+        <textarea id="inputField" oninput="handleInput()" placeholder="Write in Singlish... (e.g., mama, oyaa)"></textarea>
+        <div id="suggestions"></div>
+    </div>
+    
+    <div class="input-section">
+        <label>Generated Result</label>
+        <div class="output-container">
+            <div id="output" class="output-box"></div>
+        </div>
+    </div>
+</div>
 
-    <script>
-        function runTranslator() {
-            const input = document.getElementById("inputField").value;
-            const output = document.getElementById("output");
+<script>
+    // ඔබේ 35+ Test Cases දත්ත සමුදාය
+   const testCases = [
+    // Positive Functional Tests
+    { id: "Pos_Fun_001", sinhala: "අපි කෑම කන්න යනවා සහ පස්සේ චිත්‍රපටයකුත් බලනවා.", input: "api kaeema kanna yanavaa saha passe chithrapatayakuth balanavaa." },
+    { id: "Pos_Fun_002", sinhala: "ඔයා එනවානම් මම බලන් ඉන්නවා.", input: "oya enavaanam mama balan innavaa." },
+    { id: "Pos_Fun_003", sinhala: "මම ගෙදර යනවා.", input: "mama gedhara yanavaa." },
+    { id: "Pos_Fun_004", sinhala: "ඔයා නිදිද?", input: "Oyaa nidhidha?" },
+    { id: "Pos_Fun_005", sinhala: "ඔයාට කොහොමද?", input: "oyaata kohomadha?" },
+    { id: "Pos_Fun_006", sinhala: "ආයුබෝවන්! සුබ උදෑසනක්", input: "aayuboovan! suba udhaeesanak" },
+    { id: "Pos_Fun_007", sinhala: "මට උදව්වක් කරන්න පුළුවන්ද?", input: "mata udhavvak karanna puLuvandha?" },
+    { id: "Pos_Fun_008", sinhala: "කරුණාකරලා පොඩ්ඩක් ඉන්න", input: "karuNaakaralaa poddak inna" },
+    { id: "Pos_Fun_009", sinhala: "ඒයි, ඕක දියන්", input: "eeyi, ooka dhiyan" },
+    { id: "Pos_Fun_010", sinhala: "ගිහින් ගිහින්", input: "gihin gihin" },
+    { id: "Pos_Fun_011", sinhala: "ඊයේ ගෙදර ගියා", input: "iiyee gedhara giya" },
+    { id: "Pos_Fun_012", sinhala: "අපි හෙට එනවා", input: "api heta enavaa" },
+    { id: "Pos_Fun_013", sinhala: "ඊළඟ ළමයි ස්කූල්", input: "iiLaGa Lamayi schoo" },
+    { id: "Pos_Fun_014", sinhala: "Zoom මීටින් එකක් තියෙන්නේ!", input: "Zoom mIt8 ekak thiyennee!" },
+    { id: "Pos_Fun_015", sinhala: "අපි ට්‍රිප් නුවර වලට යමු", input: "api trip Kandy valata yamAw" },
+    { id: "Pos_Fun_016", sinhala: "රුපියල් 5000 ක් දෙන්න", input: "Rs. 5000 k dhenna" },
+    { id: "Pos_Fun_018", sinhala: "අඩෝ පට්ට බං සිරාවටම", input: "Adoo patta bng siraavatama" },
+    { id: "Pos_Fun_019", sinhala: "මට නිදිමතයි පොඩ්ඩක් ඉන්න", input: "mata nidhimathayi poddak inna" },
+    { id: "Pos_Fun_020", sinhala: "නිමාලි ඔෆිස් ලේට් ඒ කොළඹ ට්‍රිප්", input: "nimaali office late ee Colombo trip" },
+    { id: "Pos_Fun_022", sinhala: "එයා එනවා.", input: "eyae Henavaa." },
+    { id: "Pos_Fun_023", sinhala: "දිට්ඨ සුළි කුණාටුව.", input: "dhitvaa suLi kuNaatuva." },
+    { id: "Pos_Fun_024", sinhala: "Zoom WiFi Email WhatsApp", input: "Zoom WiFi Email WhatsApp" },
 
-            if (!input.trim()) { output.innerText = ""; return; }
+    // Negative Functional Tests
+    { id: "Neg_Fun_001", sinhala: "mamagedharaya", input: "mamagedharaya" },
+    { id: "Neg_Fun_002", sinhala: "mma g 4 ynwa.", input: "mma g 4 ynwa." },
+    { id: "Neg_Fun_004", sinhala: "www.google.com", input: "www.google.com" },
+    { id: "Neg_Fun_008", sinhala: "මම ගෙදර", input: "mama    gedhara" },
+    { id: "Neg_Fun_010", sinhala: "dnnabariunaaerrorekaknisaa.", input: "dnnabariunaaerrorekaknisaa." },
 
-            const mapping = {
-                "mama": "මම", "gedhara": "ගෙදර", "yanavaa": "යනවා",
-                "bath": "බත්", "oonee": "ඕනේ", "api": "අපි", "paasal": "පාසල්",
-                "haebaeyi": "හැබැයි", "vahina": "වහින", "nisaa": "නිසා", "dhaenma": "දැන්ම",
-                "kaeema": "කෑම", "kanna": "කන්න", "saha": "සහ", "passe": "පස්සේ",
-                "chithrapatayakuth": "චිත්‍රපටයකුත්", "balanavaa": "බලනවා", "oyaa": "ඔයා",
-                "hari": "හරි", "ehenam": "එහෙනම්", "yamu": "යමු", "yamAw": "යමු",
-                "vaessa": "වැස්ස", "unoth": "උනොත්", "maarga": "මාර්ග", "thadhabadha": "තදබදය",
-                "oyaata": "ඔයාට", "kohomadha": "කොහොමද", "kavadhdha": "කවද්ද", "meeka": "මේක",
-                "vaede": "වැඩේ", "vahaama": "වහාම", "issarahata": "ඉස්සරහට", "valaa": "වලා",
-                "naeha": "නැහැ", "aayuboovan!": "ආයුබෝවන්!", "suba": "සුබ", "udhaeesanak": "උදෑසනක්",
-                "udhavvak": "උදව්වක්", "karanna": "කරන්න", "puLuvan": "පුළුවන්", "puLuvandha": "පුළුවන්ද",
-                "karuNaakaralaa": "කරුණාකරලා", "poddak": "පොඩ්ඩක්", "lipin": "ලිපින", "dhennam": "දෙන්නම්",
-                "ov": "ඔව්", "samaava": "සමාව", "athvaeradhiimak": "අත්වැරදීමක්", "eeyi": "ඒයි",
-                "ooka": "ඕක", "dhiyan": "දියන්", "nidhimathayi": "නිදිමතයි", "gihin": "ගිහින්",
-                "paan": "පාන්", "iyee": "ඊයේ", "naetum": "නැටුම්", "panthi": "පන්ති",
-                "iiLaGa": "ඊළඟ", "Lamayi": "ළමයි", "schoo": "ස්කූල්", "vaeen": "වෑන්",
-                "nimaali": "නිමාලි", "office": "ඔෆිස්", "late": "ලේට්", "Colombo": "කොළඹ",
-                "trip": "ට්‍රිප්", "Kandy": "නුවර", "mIt8": "මීටින්", "attach": "ඇමුණුම්",
-                "salli": "සල්ලි", "Rs.": "රුපියල්", "rae": "රෑ", "ssee": "සී", "dhitvaa": "දිට්ඨ",
-                "suLi": "සුළි", "kuNaatuva": "කුණාටුව", "vathur": "වතුර", "ayay": "අය",
-                "heethuven": "හේතුවෙන්", "aDhikaariy": "අධිකාරිය", "kotas": "කොටස්",
-                "vinaasha": "විනාශ", "iga": "ඉග", "kiloomiitar": "කිලෝමීටර්", "pamaNa": "පමණ",
-                "naagarika": "නාගරික", "kaLeey": "කළේය", "machan": "මචං", "supiri": "සුපිරි",
-                "adoo": "අඩෝ", "bng": "බං", "siraavatama": "සිරාවටම", "kiri": "කිරි",
-                "Oyaa": "ඔයා", "nidhidha": "නිදිද", "enavaanam": "එනවානම්"
-            };
+    // UI Test
+    { id: "Pos_UI_001", sinhala: "මන් ගෙදර යනවා", input: "man gedhara yanavaa" }
+];
 
-            const words = input.split(/\s+/);
-            const translated = words.map(word => {
-                let clean = word.replace(/[?.,!]/g, "");
-                let result = mapping[clean] || mapping[word.toLowerCase()] || mapping[word] || word;
-                if (word.endsWith("?")) result += "?";
-                if (word.endsWith(".")) result += ".";
-                if (word.endsWith("!")) result += "!";
-                return result;
-            });
-            output.innerText = translated.join(" ");
+    const mapping = {
+    // Basic Pronouns & Verbs
+    "mama": "මම", "man": "මන්", "eya": "එයා", "eyae": "එයා", "oyaa": "ඔයා", "oya": "ඔයා", "oyaata": "ඔයාට", "api": "අපි",
+    "yanavaa": "යනවා", "giya": "ගියා", "enavaa": "එනවා", "enavaanam": "එනවානම්", "Henavaa": "එනවා",
+    "balan": "බලන්", "innavaa": "ඉන්නවා", "inna": "ඉන්න", "dhenna": "දෙන්න", "dhiyan": "දියන්",
+
+    // Common Words
+    "gedhara": "ගෙදර", "bath": "බත්", "kaeema": "කෑම", "kanna": "කන්න", "saha": "සහ", "passe": "පස්සේ",
+    "chithrapatayakuth": "චිත්‍රපටයකුත්", "balanavaa": "බලනවා", "nidhidha": "නිදිද", "kohomadha": "කොහොමද",
+    "udhavvak": "උදව්වක්", "karanna": "කරන්න", "puLuvandha": "පුළුවන්ද", "karuNaakaralaa": "කරුණාකරලා",
+    "poddak": "පොඩ්ඩක්", "eeyi": "ඒයි", "ooka": "ඕක", "gihin": "ගිහින්", "iiyee": "ඊයේ", "heta": "හෙට",
+
+    // Greetings & Formal
+    "aayuboovan": "ආයුබෝවන්", "suba": "සුබ", "udhaeesanak": "උදෑසනක්", "samaava": "සමාව",
+
+    // Locations & Travel
+    "trip": "ට්‍රිප්", "Kandy": "නුවර", "Colombo": "කොළඹ", "valata": "වලට", "yamu": "යමු", "yamAw": "යමු",
+
+    // Slang & Informal
+    "adoo": "අඩෝ", "patta": "පට්ට", "bng": "බං", "siraavatama": "සිරාවටම", "machan": "මචං", "nidhimathayi": "නිදිමතයි",
+
+    // Technical & Plural
+    "Zoom": "Zoom", "mIt8": "මීටින්", "ekak": "එකක්", "thiyennee": "තියෙන්නේ", "office": "ඔෆිස්", "late": "ලේට්",
+    "iiLaGa": "ඊළඟ", "Lamayi": "ළමයි", "schoo": "ස්කූල්", "WiFi": "WiFi", "Email": "Email", "WhatsApp": "WhatsApp",
+
+    // Paragraph Style (Source Appendix 1)
+    "dhitvaa": "දිට්ඨ", "suLi": "සුළි", "kuNaatuva": "කුණාටුව", "Rs": "රුපියල්", "5000": "5000", "k": "ක්"
+};
+
+    function handleInput() {
+        const input = document.getElementById("inputField").value;
+        const suggestionBox = document.getElementById("suggestions");
+
+        runTranslator(input);
+
+        const query = input.toLowerCase().trim();
+        if (query === "") {
+            suggestionBox.style.display = "none";
+            return;
         }
-    </script>
+
+        const words = query.split(/\s+/);
+        const lastWord = words[words.length - 1];
+        const sinhalaMeaning = mapping[lastWord] || "";
+
+        const filtered = testCases.filter(tc => 
+            (sinhalaMeaning !== "" && tc.sinhala.includes(sinhalaMeaning)) || 
+            tc.input.toLowerCase().includes(lastWord)
+        );
+
+        if (filtered.length > 0) {
+            suggestionBox.innerHTML = filtered.map(tc => {
+                let displaySinhala = tc.sinhala;
+                if (sinhalaMeaning !== "") {
+                    const regex = new RegExp(`(${sinhalaMeaning})`, "gi");
+                    displaySinhala = tc.sinhala.replace(regex, '<span class="highlight">$1</span>');
+                }
+                
+                return `
+                    <div class="suggestion-item" onclick="selectItem('${tc.input}')">
+                        <span class="sinhala-text">${displaySinhala}</span>
+                        <div class="suggestion-meta">
+                            <span>Input: ${tc.input.substring(0, 30)}...</span>
+                            <span class="badge-id">${tc.id}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            suggestionBox.style.display = "block";
+        } else {
+            suggestionBox.style.display = "none";
+        }
+    }
+
+    function runTranslator(input) {
+        const output = document.getElementById("output");
+        if (!input.trim()) { output.innerText = ""; return; }
+        const words = input.split(/\s+/);
+        const translated = words.map(word => {
+            let clean = word.toLowerCase().replace(/[?.,!]/g, "");
+            return mapping[clean] || word;
+        });
+        output.innerText = translated.join(" ");
+    }
+
+    function selectItem(text) {
+        document.getElementById("inputField").value = text;
+        document.getElementById("suggestions").style.display = "none";
+        runTranslator(text);
+    }
+
+    document.addEventListener('click', (e) => {
+        if (!document.getElementById('inputField').contains(e.target)) {
+            document.getElementById('suggestions').style.display = "none";
+        }
+    });
+</script>
+
 </body>
 </html>
